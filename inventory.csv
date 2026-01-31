@@ -1,0 +1,4 @@
+part_id,description,location,stock,lead_time_days,unit_cost_usd
+VALVE-X9,High-pressure valve,On-Site,0,6,85000
+VALVE-X9,High-pressure valve,Site-C,1,1,85000
+VALVE-X9,High-pressure valve,Supplier-A,99,6,85000
