@@ -1,0 +1,5 @@
+asset_id,type,location,status,daily_output_bbl,downtime_cost_usd
+WELL-17,Well,Oman North,At Risk,12000,420000
+RIG-A3,Rig,Oman North,Operating,,180000
+TANK-2,Storage Tank,Terminal East,Normal,,90000
+  
