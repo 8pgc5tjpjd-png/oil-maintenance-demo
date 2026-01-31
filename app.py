@@ -1,44 +1,78 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
-st.set_page_config(page_title="Oil Maintenance Demo", layout="wide")
-
-st.title("🛢️ Oil Maintenance & Spare Parts Decision Layer")
-
-st.markdown(
-    """
-This is a *demo decision layer* showing how maintenance events,
-asset health, and inventory can be connected — similar to a lightweight,
-AI-ready alternative to SAP maintenance modules.
-"""
+st.set_page_config(
+    page_title="Oil Maintenance Decision System",
+    layout="wide"
 )
 
-# --- Load data (relative paths, Streamlit-safe) ---
-assets = pd.read_csv("assets.csv")
-events = pd.read_csv("events.csv")
-inventory = pd.read_csv("inventory.csv")
+st.title("🛢️ Oil Maintenance & Spare Parts Decision System")
+st.caption("AI-style operational decision layer demo (SAP alternative)")
 
-# --- Layout ---
-col1, col2 = st.columns(2)
+# -------------------------
+# DEMO DATA (hardcoded)
+# -------------------------
 
-with col1:
-    st.subheader("📋 Assets")
+assets = pd.DataFrame([
+    {"Asset ID": "PUMP-001", "Type": "Pump", "Location": "Field A", "Status": "Critical"},
+    {"Asset ID": "VALVE-014", "Type": "Valve", "Location": "Refinery", "Status": "Warning"},
+    {"Asset ID": "COMP-221", "Type": "Compressor", "Location": "Pipeline", "Status": "Healthy"},
+])
+
+inventory = pd.DataFrame([
+    {"Part": "Pump Seal", "Stock": 2, "Min Required": 5, "Lead Time (days)": 14},
+    {"Part": "Valve Spring", "Stock": 18, "Min Required": 10, "Lead Time (days)": 7},
+    {"Part": "Compressor Filter", "Stock": 0, "Min Required": 3, "Lead Time (days)": 21},
+])
+
+events = pd.DataFrame([
+    {"Asset ID": "PUMP-001", "Event": "Pressure spike", "Date": "2026-01-28"},
+    {"Asset ID": "VALVE-014", "Event": "Leak detected", "Date": "2026-01-30"},
+])
+
+# -------------------------
+# UI
+# -------------------------
+
+tab1, tab2, tab3 = st.tabs([
+    "📊 Asset Health",
+    "📦 Spare Parts Risk",
+    "🤖 AI Recommendations"
+])
+
+with tab1:
+    st.subheader("Asset Health Overview")
     st.dataframe(assets, use_container_width=True)
 
-with col2:
-    st.subheader("🛠️ Maintenance Events")
-    st.dataframe(events, use_container_width=True)
+with tab2:
+    st.subheader("Spare Parts Inventory Risk")
 
-st.subheader("📦 Spare Parts Inventory")
-st.dataframe(inventory, use_container_width=True)
+    def risk(row):
+        if row["Stock"] == 0:
+            return "🔴 Stockout"
+        if row["Stock"] < row["Min Required"]:
+            return "🟠 Low Stock"
+        return "🟢 OK"
 
-# --- Simple insight example ---
-st.subheader("⚠️ Simple Operational Insight")
+    inventory["Risk"] = inventory.apply(risk, axis=1)
+    st.dataframe(inventory, use_container_width=True)
 
-low_stock = inventory[inventory["quantity"] < 5]
+with tab3:
+    st.subheader("AI-Style Operational Decisions")
 
-if not low_stock.empty:
-    st.warning("Some spare parts are running low:")
-    st.dataframe(low_stock)
-else:
-    st.success("All spare parts are sufficiently stocked.")
+    st.markdown("""
+    *System Output:*
+    - Immediate maintenance required for *PUMP-001*
+    - Order *Pump Seals* immediately (14-day lead time)
+    - Preventive action recommended for *VALVE-014*
+    """)
+
+    st.success("✔ This system replaces manual SAP workflows and planner dependency")
+
+# -------------------------
+# Footer
+# -------------------------
+
+st.markdown("---")
+st.caption("Demo system — no real operational data")
